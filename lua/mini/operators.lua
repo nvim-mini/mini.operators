@@ -1153,6 +1153,10 @@ H.do_between_marks = function(operator, data)
   local cache_selection = vim.o.selection
   if data.mode == 'block' and vim.o.selection == 'exclusive' then vim.o.selection = 'inclusive' end
 
+  -- Allow positioning cursor past line end to work for regions with newline
+  local cache_virtualedit = vim.o.virtualedit
+  vim.o.virtualedit = 'onemore'
+
   -- Don't trigger `TextYankPost` event as these yanks are not user-facing
   local is_yank = operator == 'y'
   local cache_eventignore = vim.o.eventignore
@@ -1177,6 +1181,7 @@ H.do_between_marks = function(operator, data)
   end)
 
   vim.o.selection = cache_selection
+  vim.o.virtualedit = cache_virtualedit
   if is_yank then vim.o.eventignore = cache_eventignore end
 end
 
